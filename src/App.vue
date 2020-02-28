@@ -5,24 +5,14 @@
 </template>
 
 <style lang="scss">
+  @import '~@/assets/styles/style.scss';
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: $font-hei;
+  font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #333333;
 }
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
 </style>
