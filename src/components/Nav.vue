@@ -50,7 +50,7 @@
                 height: 24px;
             }
             &.selected {
-                color: #409eff;
+                color: #ffda47;
             }
         }
     }
