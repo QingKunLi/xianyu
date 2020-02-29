@@ -115,36 +115,12 @@
             } else {
                 if (this.operator !== '') {
                     // 对上一个表达式进行运算
-                    const afterNumber = parseFloat(this.output.slice(this.beforeIndex));
-                    if (this.operator === '+') {
-                        this.beforeNumber = this.beforeNumber + afterNumber;
-                    } else if (this.operator === '-') {
-                        this.beforeNumber = this.beforeNumber - afterNumber;
-                    }
+                    this.calculate();
                     this.operator = operator;
                     this.reset();
 
-                    // 处理舍入误差
-                    const integer = this.beforeNumber.toString().split('.')[0];
-                    let decimal = this.beforeNumber.toString().split('.')[1];
-                    let wholeNumber: string;
-                    if (decimal) {
-                        // 有效位
-                        const index = decimal.indexOf('999999');
-                        if (index >= 0) {
-                            decimal = decimal.slice(0, index);
-                            const last = decimal.slice(-1);
-                            decimal = decimal.slice(0, -1) + (parseInt(last) + 1).toString();
-                        }
-                        if (decimal.length > 2) {
-                            decimal = decimal.slice(0, 2); // 只保留2位
-                        }
-                        wholeNumber = [integer, decimal].join('.');
-                    } else {
-                        wholeNumber = integer;
-                    }
-                    this.beforeNumber = parseFloat(wholeNumber);
-                    this.output = wholeNumber + operator;
+                    this.beforeNumber = this.handleError(this.beforeNumber);
+                    this.output = this.beforeNumber.toString() + operator;
                     this.beforeIndex = this.output.length;
                     return;
                 } else {
@@ -158,8 +134,50 @@
             }
         }
 
+        // 处理舍入误差
+        handleError(value: number) {
+            const integer = value.toString().split('.')[0];
+            let decimal = value.toString().split('.')[1];
+            let wholeNumber: string;
+            if (decimal) {
+                // 有效位
+                const index = decimal.indexOf('999999');
+                if (index >= 0) {
+                    decimal = decimal.slice(0, index);
+                    const last = decimal.slice(-1);
+                    decimal = decimal.slice(0, -1) + (parseInt(last) + 1).toString();
+                }
+                if (decimal.length > 2) {
+                    decimal = decimal.slice(0, 2); // 只保留2位
+                }
+                wholeNumber = [integer, decimal].join('.');
+            } else {
+                wholeNumber = integer;
+            }
+            return parseFloat(wholeNumber);
+        }
+
+        // 计算
+        calculate() {
+            const afterNumber = parseFloat(this.output.slice(this.beforeIndex));
+            if (this.operator === '+') {
+                this.beforeNumber = this.beforeNumber + afterNumber;
+            } else if (this.operator === '-') {
+                this.beforeNumber = this.beforeNumber - afterNumber;
+            }
+        }
+
         complete() {
-            console.log('complete');
+            const last = this.output.slice(-1);
+            if ((this.output.indexOf('+') >= 0 || this.output.indexOf('-') >= 0) && '+-'.indexOf(last) < 0) {
+                this.calculate();
+                this.beforeNumber = this.handleError(this.beforeNumber);
+            } else {
+                this.beforeNumber = parseFloat(this.output);
+            }
+            this.$emit('update:amount', this.beforeNumber);
+            this.output = '0';
+            this.$emit('complete');
         }
 
         remove() {

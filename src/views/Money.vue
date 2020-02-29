@@ -5,8 +5,8 @@
             <button :class="record.type === '+' && 'selected'" @click="select('+')">收入</button>
             <button class="cancel" @click="cancel">取消</button>
         </div>
-        <TagList class-prefix="money" :selected-tag.sync="record.tag" class="tag-list"/>
-        <Calculator class-prefix="money" :note.sync="record.note" :amount.sync="record.amount"/>
+        <TagList class-prefix="money" :dynamic="true" :selected-tag.sync="record.tag" :tag-list="tagList" class="tag-list"/>
+        <Calculator class-prefix="money" :note.sync="record.note" :amount.sync="record.amount" @complete="complete"/>
     </div>
 </template>
 
@@ -17,16 +17,21 @@
     import Icon from '@/components/Icon.vue';
     import Calculator from '@/components/Money/Calculator.vue';
     import TagList from '@/components/Money/TagList.vue';
+    import clone from '@/lib/clone';
 
     @Component({
         components: {TagList, Calculator, Icon, Layout}
     })
     export default class Money extends Vue {
 
-        record: RecordItem = {tag: {name: 'food', value: '餐饮'}, type: '-', note: '', amount: 0};
+        record: RecordItem = this.initRecord();
 
         get tagList(): TagItem[] {
             return this.$store.state.tagList;
+        }
+
+        initRecord(): RecordItem {
+            return {tag: {name: 'food', value: '餐饮'}, type: '-', note: '', amount: 0};
         }
 
         select(type: string) {
@@ -36,6 +41,13 @@
         cancel() {
             this.$router.replace('/bill');
         }
+
+        complete() {
+            this.$store.commit('insertRecord', clone<RecordItem>(this.record));
+            this.record = this.initRecord();
+            this.$router.replace('/bill');
+        }
+
         @Watch('record', {deep: true})
         listenRecord(val: RecordItem) {
             console.log(val.tag.name, val.tag.value);
@@ -43,6 +55,7 @@
             console.log(val.note);
             console.log(val.amount);
         }
+
         // @Watch('record.tag')
         // listen(val: TagItem) {
         //     console.log(val.name, val.value);

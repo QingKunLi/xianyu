@@ -1,13 +1,13 @@
 <template>
-    <ul class="tags">
-        <li v-for="(tag, index) in tagList" :key="index" @click="select(tag)">
-            <div class="icon" :class="{'selected': tag.name === selectedTag.name}">
+    <ul class="tags" :class="{[classPrefix+'-tags']: classPrefix}">
+        <li v-for="(tag, index) in tagList" :key="index" @click="select(tag)" class="tags-item" :class="{[classPrefix+'-tags-item']: classPrefix}">
+            <div class="tags-item-icon" :class="{'selected': tag.name === selectedTag.name, [classPrefix+'-tags-item-icon']: classPrefix}">
                 <Icon :name="tag.name"/>
             </div>
             <span>{{tag.value}}</span>
         </li>
-        <li>
-            <div class="icon" @click="add">
+        <li v-if="dynamic" class="tags-item">
+            <div class="tags-item-icon" @click="add">
                 <Icon name="add"/>
             </div>
             <span>添加</span>
@@ -24,11 +24,10 @@
         components: {Icon}
     })
     export default class TagList extends Vue {
+        @Prop(String) classPrefix?: string;
         @Prop({required: true, type: Object}) selectedTag!: TagItem;
-
-        get tagList(): TagItem[] {
-            return this.$store.state.tagList;
-        }
+        @Prop({type: Boolean, default: false}) dynamic!: boolean;
+        @Prop({required: true, type: Array}) tagList!: TagItem[];
 
         select(tag: TagItem) {
             this.$emit('update:selectedTag', tag);
@@ -49,7 +48,7 @@
         align-content: flex-start;
         overflow: auto;
 
-        > li {
+        &-item {
             width: 25%;
             padding: 12px 0;
             font-size: 12px;
@@ -57,13 +56,16 @@
             flex-direction: column;
             align-items: center;
 
-            .icon {
+            &-icon {
                 width: 48px;
                 height: 48px;
                 padding: 4px;
                 border-radius: 50%;
                 background: #f5f5f5;
                 margin-bottom: 4px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
 
                 &.selected {
                     background: #ffda47;
