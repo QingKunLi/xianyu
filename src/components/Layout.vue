@@ -1,5 +1,5 @@
 <template>
-    <div class="layout">
+    <div class="layout" :class="`${classPrefix}-layout`">
         <div class="layout-content" :class="`${classPrefix}-layout-content`">
             <slot></slot>
         </div>
@@ -23,7 +23,9 @@
     .layout {
         display: flex;
         flex-direction: column;
-        min-height: 100vh;
+        height: 100vh;
+        border: 1px solid red;
+        overflow: auto;
         &-content {
             flex-grow: 1;
         }
