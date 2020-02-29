@@ -2,12 +2,12 @@
     <div class="tags">
         <header class="header">
             <div class="title">
-                <button class="back">
-                    <Icon name="left" />
+                <button class="back" @click="back">
+                    <Icon name="left"/>
                 </button>
                 <span>添加支出类别</span>
             </div>
-            <button class="ok">完成</button>
+            <button class="ok" @click="ok">完成</button>
         </header>
         <div class="current">
             <div class="label">
@@ -71,6 +71,7 @@
         transportTags
     } from '@/constants/defaultTags';
     import Icon from '@/components/Icon.vue';
+    import clone from '@/lib/clone';
 
     @Component({
         components: {Icon, TagList, Layout}
@@ -84,10 +85,21 @@
         entertainmentTags = entertainmentTags;
         medicalTags = medicalTags;
 
-        @Watch('tag', {deep: true})
-        onTagChange(val: TagItem) {
-            console.log(val.name);
-            console.log(val.value);
+        get tagList() {
+            return this.$store.state.tagList;
+        }
+
+        back() {
+            this.$router.back();
+        }
+
+        ok() {
+            this.$store.commit('insertTag', clone(this.tag));
+            if (this.$store.state.tagListError === 'duplicate') {
+                window.alert('不可添加同名的标签类别');
+            } else {
+                this.$router.replace('/money');
+            }
         }
     }
 </script>
@@ -145,16 +157,19 @@
         .title {
             display: flex;
             align-items: center;
+
             .back {
                 svg {
                     width: 24px;
                     height: 24px;
                 }
+
                 background: inherit;
                 border: none;
                 margin-right: 8px;
             }
         }
+
         .ok {
             font-size: 16px;
             color: red;
@@ -171,6 +186,7 @@
         .label {
             display: flex;
             align-items: center;
+
             .icon {
                 width: 40px;
                 height: 40px;
@@ -181,6 +197,7 @@
                 justify-content: center;
                 align-items: center;
                 margin-left: 8px;
+
                 svg {
                     width: 24px;
                     height: 24px;
