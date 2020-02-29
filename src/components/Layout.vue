@@ -1,6 +1,6 @@
 <template>
     <div class="layout">
-        <div class="layout-content">
+        <div class="layout-content" :class="`${classPrefix}-layout-content`">
             <slot></slot>
         </div>
         <Nav />
@@ -9,12 +9,13 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {Component} from 'vue-property-decorator';
+    import {Component, Prop} from 'vue-property-decorator';
     import Nav from '@/components/Nav.vue';
     @Component({
         components: {Nav}
     })
     export default class Layout extends Vue {
+        @Prop(String) classPrefix?: string;
     }
 </script>
 
