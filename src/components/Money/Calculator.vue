@@ -1,31 +1,22 @@
 <template>
     <div class="calculator" :class="classPrefix && `${classPrefix}-calculator`">
-        <div class="panel">
-            <label class="note">
-                <div class="icon">
-                    <Icon name="note"/>
-                </div>
-                <span>备注:</span>
-                <input type="text" placeholder="写点备注吧~">
-            </label>
-            <div class="amount">0</div>
-        </div>
+        <label class="note">
+            <div class="icon">
+                <Icon name="note"/>
+            </div>
+            <span>备注:</span>
+            <input type="text" placeholder="写点备注吧~" :value="note" @input="writeNote($event.target.value)">
+        </label>
+        <div class="panel">{{output}}</div>
         <div class="number-pad">
-            <button>1</button>
-            <button>2</button>
-            <button>3</button>
-            <button>+</button>
-            <button>4</button>
-            <button>5</button>
-            <button>6</button>
-            <button>-</button>
-            <button>7</button>
-            <button>8</button>
-            <button>9</button>
-            <button class="ok">完成</button>
-            <button>.</button>
-            <button>0</button>
-            <button>
+            <button
+                    v-for="(name, index) in buttonList" :key="index"
+                    :class="name==='完成' && 'ok'"
+                    @click="handle(name)"
+            >
+                {{name}}
+            </button>
+            <button @click="remove">
                 <Icon name="delete"/>
             </button>
         </div>
@@ -34,13 +25,192 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {Component, Prop} from 'vue-property-decorator';
+    import {Component, Prop, Watch} from 'vue-property-decorator';
     import Icon from '@/components/Icon.vue';
+    import {parse} from '@typescript-eslint/parser';
+
     @Component({
         components: {Icon}
     })
     export default class Calculator extends Vue {
         @Prop(String) classPrefix?: string;
+        @Prop({required: true, type: String}) note!: string;
+        @Prop({required: true, type: Number}) amount!: string;
+        buttonList: string[] = ['1', '2', '3', '+', '4', '5', '6', '-',
+            '7', '8', '9', '完成', '.', '0'];
+        output = '0';
+        dot = true;
+        // 有效数字最多为.前4位.后2位
+        validNumberBeforeDot = 4;
+        validNumberAfterDot = 2;
+        // 记录运算
+        beforeNumber = 0;
+        beforeIndex = 0;
+        operator = '';
+
+        writeNote(note: string) {
+            this.$emit('update:note', note);
+        }
+
+        handle(button: string) {
+            if (button !== '完成') {
+                this.handleInput(button);
+            } else {
+                this.complete();
+            }
+        }
+
+        handleInput(button: string) {
+            // 最大有效位数17位
+            if (this.output.length >= 17) {
+                return;
+            }
+            // 数字不能以0开头(除了小数)
+            if (this.output === '0') {
+                if ('0123456789'.indexOf(button) >= 0) {
+                    this.output = button;
+                    this.validNumberBeforeDot -= 1;
+                } else if (button === '.') {
+                    this.output += button;
+                    this.dot = false;
+                }
+                return;
+            }
+            // 处理输入为点
+            if (button === '.') {
+                return this.handleDot();
+            }
+            // 处理数字
+            if ('0123456789'.indexOf(button) >= 0) {
+                return this.handleNumber(button);
+            }
+            // 处理运算符
+            if ('+-'.indexOf(button) >= 0) {
+                return this.handleOperator(button);
+            }
+        }
+
+        handleDot() {
+            if (this.dot) {
+                this.output += '.';
+                this.dot = false;
+            }
+        }
+
+        handleNumber(num: string) {
+            if (this.dot && this.validNumberBeforeDot > 0) {
+                this.output += num;
+                this.validNumberBeforeDot -= 1;
+            } else if (!this.dot && this.validNumberAfterDot > 0) {
+                this.output += num;
+                this.validNumberAfterDot -= 1;
+            }
+        }
+
+        handleOperator(operator: string) {
+            const last = this.output.slice(-1);
+            // 不合法输入
+            if ('.+-'.indexOf(last) >= 0) {
+                return;
+            } else {
+                if (this.operator !== '') {
+                    // 对上一个表达式进行运算
+                    const afterNumber = parseFloat(this.output.slice(this.beforeIndex));
+                    if (this.operator === '+') {
+                        this.beforeNumber = this.beforeNumber + afterNumber;
+                    } else if (this.operator === '-') {
+                        this.beforeNumber = this.beforeNumber - afterNumber;
+                    }
+                    this.operator = operator;
+                    this.reset();
+
+                    // 处理舍入误差
+                    const integer = this.beforeNumber.toString().split('.')[0];
+                    let decimal = this.beforeNumber.toString().split('.')[1];
+                    let wholeNumber: string;
+                    if (decimal) {
+                        // 有效位
+                        const index = decimal.indexOf('999999');
+                        if (index >= 0) {
+                            decimal = decimal.slice(0, index);
+                            const last = decimal.slice(-1);
+                            decimal = decimal.slice(0, -1) + (parseInt(last) + 1).toString();
+                        }
+                        if (decimal.length > 2) {
+                            decimal = decimal.slice(0, 2); // 只保留2位
+                        }
+                        wholeNumber = [integer, decimal].join('.');
+                    } else {
+                        wholeNumber = integer;
+                    }
+                    this.beforeNumber = parseFloat(wholeNumber);
+                    this.output = wholeNumber + operator;
+                    this.beforeIndex = this.output.length;
+                    return;
+                } else {
+                    // 记录上一个数
+                    this.beforeNumber = parseFloat(this.output);
+                    this.operator = operator;
+                    this.output += operator;
+                    this.beforeIndex = this.output.length;
+                    return;
+                }
+            }
+        }
+
+        complete() {
+            console.log('complete');
+        }
+
+        remove() {
+            if (this.output.length > 1) {
+                const last = this.output.slice(-1);
+                if (last === '.') {
+                    this.dot = true;
+                } else if ('+-'.indexOf(last) >= 0) {
+                    this.operator = '';
+                } else if ('0123456789'.indexOf(last) >= 0) {
+                    if (this.dot) {
+                        this.validNumberBeforeDot += 1;
+                    } else {
+                        this.validNumberAfterDot += 1;
+                    }
+                }
+                this.output = this.output.slice(0, -1);
+            } else {
+                this.output = '0';
+                this.reset();
+            }
+        }
+
+        reset() {
+            this.dot = true;
+            this.validNumberBeforeDot = 4;
+            this.validNumberAfterDot = 2;
+        }
+
+        @Watch('operator')
+        onOperator(val: string) {
+            // 操作符被删除
+            if (val === '') {
+                // 重置 dot 以及 validNumber 状态
+                if (this.beforeNumber.toString().indexOf('.') >= 0) {
+                    this.dot = false;
+                    const integer = this.beforeNumber.toString().split('.')[0];
+                    const decimal = this.beforeNumber.toString().split('.')[1];
+                    this.validNumberBeforeDot = 4 - integer.length;
+                    this.validNumberAfterDot = 2 - decimal.length;
+                } else {
+                    this.dot = true;
+                    this.validNumberBeforeDot = 4 - this.beforeNumber.toString().length;
+                    this.validNumberAfterDot = 2;
+                }
+            } else {
+                // 有新的操作符
+                // dot 及 validNumber置为初始状态
+                this.reset();
+            }
+        }
     }
 </script>
 
@@ -48,39 +218,40 @@
     @import '~@/assets/styles/style.scss';
 
     .calculator {
-        .panel {
+        .note {
             display: flex;
             align-items: center;
-            background: #f5f5f5;
+            padding: 4px 8px;
+            font-size: 14px;
+            border-top: 1px solid #f5f5f5;
 
-            .note {
-                width: 50%;
-                display: flex;
-                align-items: center;
-                padding: 4px 8px;
-                font-size: 14px;
-
-                .icon {
-                    margin-right: 2px;
-                }
-                span {
-                    white-space: nowrap;
-                }
-                input {
-                    margin-left: 8px;
-                    height: 32px;
-                    border: none;
-                    background: inherit;
-                }
+            .icon {
+                margin-right: 2px;
             }
-            .amount {
-                width: 50%;
-                padding: 6px 12px 4px 12px;
-                font-size: 24px;
-                font-family: Consolas, monospace;
-                text-align: right;
+
+            span {
+                white-space: nowrap;
+            }
+
+            input {
+                flex-grow: 1;
+                margin-left: 8px;
+                height: 32px;
+                border: none;
+                background: inherit;
             }
         }
+
+        .panel {
+            background: #f5f5f5;
+            padding: 6px 12px;
+            font-size: 24px;
+            line-height: 24px;
+            font-family: Consolas, monospace;
+            text-align: right;
+
+        }
+
         .number-pad {
             @extend %clear-fix;
 
