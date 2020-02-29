@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {defaultTags} from '@/constants/defaultTags';
+import idCreator from '@/lib/idCreator';
 
 Vue.use(Vuex);
 
@@ -12,6 +13,7 @@ const store = new Vuex.Store({
     },
     mutations: {
         insertRecord(state, record: RecordItem) {
+            record.id = idCreator();
             record.createAt = new Date();
             state.recordList.push(record);
             store.commit('saveRecord');

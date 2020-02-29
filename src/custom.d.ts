@@ -3,6 +3,7 @@ type TagItem = {
     value: string;
 }
 type RecordItem = {
+    id?: number;
     tag: TagItem;
     type: string;
     note: string;
