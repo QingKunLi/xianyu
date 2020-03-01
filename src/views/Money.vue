@@ -1,12 +1,15 @@
 <template>
     <div class="money">
         <div class="types">
-            <button :class="record.type === '-' && 'selected'" @click="select('-')">支出</button>
-            <button :class="record.type === '+' && 'selected'" @click="select('+')">收入</button>
+            <!--            <button :class="record.type === '-' && 'selected'" @click="select('-')">支出</button>-->
+            <!--            <button :class="record.type === '+' && 'selected'" @click="select('+')">收入</button>-->
+            <TabBar :bars="[{name: '支出', value: '-'}, {name: '收入', value: '+'}]" :c-bar.sync="record.type"/>
             <button class="cancel" @click="cancel">取消</button>
         </div>
-        <TagList v-if="record.type === '-'" class-prefix="money" :dynamic="true" :selected-tag.sync="record.tag" :tag-list="tagList" class="tag-list"/>
-        <TagList v-else-if="record.type === '+'" class-prefix="money" :selected-tag.sync="record.tag" :tag-list="incomeTags" class="tag-list" />
+        <TagList v-if="record.type === '-'" class-prefix="money" :dynamic="true" :selected-tag.sync="record.tag"
+                 :tag-list="tagList" class="tag-list"/>
+        <TagList v-else-if="record.type === '+'" class-prefix="money" :selected-tag.sync="record.tag"
+                 :tag-list="incomeTags" class="tag-list"/>
         <Calculator class-prefix="money" :note.sync="record.note" :amount.sync="record.amount" @complete="complete"/>
     </div>
 </template>
@@ -20,9 +23,10 @@
     import TagList from '@/components/Money/TagList.vue';
     import clone from '@/lib/clone';
     import {defaultIncomeTags} from '@/constants/defaultTags';
+    import TabBar from '@/components/TabBar.vue';
 
     @Component({
-        components: {TagList, Calculator, Icon, Layout}
+        components: {TabBar, TagList, Calculator, Icon, Layout}
     })
     export default class Money extends Vue {
 
@@ -35,10 +39,6 @@
 
         initRecord(): RecordItem {
             return {tag: {name: 'food', value: '餐饮'}, type: '-', note: '', amount: 0};
-        }
-
-        select(type: string) {
-            this.record.type = type;
         }
 
         cancel() {
@@ -86,24 +86,13 @@
         justify-content: center;
         position: relative;
 
-        button {
-            font-size: 20px;
+        .cancel {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            font-size: 14px;
             padding: 24px 16px 8px 16px;
-            border: none;
-            background: inherit;
-            border-bottom: 1px solid transparent;
-
-            &.selected {
-                border-bottom: 1px solid #333333;
-            }
-
-            &.cancel {
-                position: absolute;
-                top: 50%;
-                right: 0;
-                transform: translateY(-50%);
-                font-size: 14px;
-            }
         }
     }
 

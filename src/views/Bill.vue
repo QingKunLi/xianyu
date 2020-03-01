@@ -93,7 +93,7 @@
             return result;
         }
 
-        get recordList() {
+        get recordList(): RecordItem[] {
             return this.$store.state.recordList;
         }
 

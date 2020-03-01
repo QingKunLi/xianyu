@@ -102,6 +102,7 @@
 
         ok() {
             if (this.record) {
+                this.record.amount = parseFloat(this.record.amount.toString());
                 this.$store.commit('updateRecord', {id: this.record.id, record: this.record});
             }
             this.$router.replace('/');

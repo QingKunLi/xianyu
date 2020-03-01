@@ -10,3 +10,7 @@ type RecordItem = {
     amount: number;
     createAt?: Date;
 }
+type TabBarItem = {
+    name: string;
+    value: string;
+}

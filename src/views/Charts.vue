@@ -1,7 +1,15 @@
 <template>
     <Layout>
         <header>
-
+            <div>
+                <span>支出</span>
+                <span>收入</span>
+            </div>
+            <div>
+                <span>周</span>
+                <span>月</span>
+                <span>日</span>
+            </div>
         </header>
         <div id="figure"></div>
     </Layout>
