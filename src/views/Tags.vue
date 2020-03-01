@@ -59,7 +59,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {Component, Watch} from 'vue-property-decorator';
+    import {Component} from 'vue-property-decorator';
     import Layout from '@/components/Layout.vue';
     import TagList from '@/components/Money/TagList.vue';
     import {
@@ -90,7 +90,7 @@
         }
 
         back() {
-            this.$router.back();
+            this.$router.replace('/money');
         }
 
         ok() {
@@ -173,6 +173,8 @@
         .ok {
             font-size: 16px;
             color: red;
+            border: none;
+            background: inherit;
         }
     }
 

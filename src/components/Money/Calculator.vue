@@ -27,7 +27,6 @@
     import Vue from 'vue';
     import {Component, Prop, Watch} from 'vue-property-decorator';
     import Icon from '@/components/Icon.vue';
-    import {parse} from '@typescript-eslint/parser';
 
     @Component({
         components: {Icon}
@@ -242,6 +241,7 @@
             padding: 4px 8px;
             font-size: 14px;
             border-top: 1px solid #f5f5f5;
+            background: lighten(#f5f5f5, 4%);
 
             .icon {
                 margin-right: 2px;

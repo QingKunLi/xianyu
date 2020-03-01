@@ -14,6 +14,19 @@ img {
 ul, ol, li {
   list-style: none;
 }
+button {
+  border: none;
+  background: inherit;
+}
 :focus {
   outline: none;
+}
+select {
+  border: none;
+  outline: none;
+  background: inherit;
+  //隐藏select的下拉图标
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }

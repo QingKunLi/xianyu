@@ -6,8 +6,17 @@
             </div>
             <div class="info">
                 <div class="calendar">
-                    <div class="label">2020年</div>
-                    <div class="value"><span>02</span>月</div>
+                    <!--                    <div class="label">{{year}}年</div>-->
+                    <!--                    <div class="value"><span>{{cMonth}}</span>月</div>-->
+                    <select v-model="year" class="year">
+                        <option v-for="y in years" :key="y" :value="y">{{y}}年</option>
+                    </select>
+                    <div class="month">
+                        <select v-model="month">
+                            <option v-for="m in 12" :key="m" :value="m">{{beautifyMonth(m)}}</option>
+                        </select>
+                        <span>月</span>
+                    </div>
                 </div>
                 <div class="total">
                     <div>
@@ -66,7 +75,19 @@
     })
     export default class Bill extends Vue {
         logo: string = logo;
-        month = dayjs().month();
+        year = dayjs().year().toString();
+        month = (dayjs().month() + 1).toString();
+
+        get years() {
+            const endYear = dayjs().year();
+            let y = 1970;
+            const result: number[] = [];
+            while (y <= endYear) {
+                result.push(y);
+                y++;
+            }
+            return result;
+        }
 
         get recordList() {
             return this.$store.state.recordList;
@@ -76,12 +97,20 @@
             const result: Group[] = [];
             const names: string[] = [];
             // 对记录排序
-            const sortedRecordList = clone<RecordItem[]>(this.recordList).filter(item => dayjs(item.createAt).month() === this.month).sort((b, a) => {
+            const sortedRecordList = clone<RecordItem[]>(this.recordList).filter(item => (dayjs(item.createAt).year() === parseInt(this.year)) && (dayjs(item.createAt).month() + 1 === parseInt(this.month))).sort((b, a) => {
                 return dayjs(a.createAt).valueOf() - dayjs(b.createAt).valueOf();
             });
             let record: RecordItem;
             for (record of sortedRecordList) {
-                const date = dayjs(record.createAt).toISOString().split('T')[0];
+                let date: string;
+                if (this.year === dayjs().year().toString()) {
+                    // 今年的数据按天分组
+                    date = dayjs(record.createAt).toISOString().split('T')[0];
+                } else {
+                    // 以前的数据按月分组
+                    date = dayjs(record.createAt).format('YYYY-MM');
+                }
+
                 const index = names.indexOf(date);
                 if (index < 0) {
                     names.push(date);
@@ -127,6 +156,10 @@
             return total;
         }
 
+        beautifyMonth(m: number) {
+            return m < 10 ? '0' + m.toString() : m.toString();
+        }
+
         toWeekday(value: number) {
             if (value >= 0 && value <= 6) {
                 return [
@@ -150,8 +183,10 @@
                 return `昨天 ${this.toWeekday(day.day())}`;
             } else if (day.isSame(now.subtract(2, 'day'), 'day')) {
                 return `前天 ${this.toWeekday(day.day())}`;
+            } else if (day.isSame(now, 'year')) {
+                return `${day.format('M月D日')} ${this.toWeekday(day.day())}`;
             } else {
-                return `${day.format('M月d日')} ${this.toWeekday(day.day())}`;
+                return `${day.format('YYYY年M月')}`;
             }
         }
 
@@ -208,7 +243,7 @@
 
             .value {
                 span {
-                    font-size: 18px;
+                    font-size: 20px;
                 }
 
                 font-size: 12px;
@@ -216,10 +251,27 @@
 
             .calendar {
                 position: relative;
-                padding: 4px 16px;
+                padding: 0 16px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                .year {
+                    font-size: 12px;
+                    color: #a38932;
+                    padding: 0 3px;
+                    margin-bottom: 5px;
+                }
 
                 .month {
-                    font-size: 24px;
+                    font-size: 12px;
+                    padding: 0 3px;
+                    display: flex;
+                    align-items: center;
+
+                    select {
+                        font-size: 20px;
+                    }
                 }
 
                 &::after {
@@ -284,4 +336,5 @@
             }
         }
     }
+
 </style>
