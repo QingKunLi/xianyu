@@ -1,15 +1,8 @@
 <template>
     <Layout>
-        <header>
-            <div>
-                <span>支出</span>
-                <span>收入</span>
-            </div>
-            <div>
-                <span>周</span>
-                <span>月</span>
-                <span>日</span>
-            </div>
+        <header class="header">
+            <TabBar class-prefix="types" :bars="typeList" :c-bar.sync="type"/>
+            <TabBar class-prefix="interval" :bars="intervalList" :c-bar.sync="interval" />
         </header>
         <div id="figure"></div>
     </Layout>
@@ -20,13 +13,28 @@
     import {Component} from 'vue-property-decorator';
     import Layout from '@/components/Layout.vue';
     import echarts from 'echarts';
+    import TabBar from '@/components/TabBar.vue';
 
     @Component({
-        components: {Layout}
+        components: {TabBar, Layout}
     })
     export default class Charts extends Vue {
+
+        typeList: TabBarItem[] = [
+            {name: '支出', value: '+'},
+            {name: '收入', value: '-'}
+        ];
+        intervalList: TabBarItem[] = [
+            {name: '周', value: 'week'},
+            {name: '月', value: 'month'},
+            {name: '年', value: 'year'}
+        ];
+
+        type = '-';
+        interval = 'week';
+
         mounted() {
-            this.$store
+            this.$store;
             const $figure = document.getElementById('figure');
             const figure = echarts.init($figure as HTMLDivElement);
             figure.setOption({
@@ -63,7 +71,7 @@
                     name: '支出',
                     type: 'line',
                     data: this.array,
-                } ,{
+                }, {
                     name: '平均线',
                     type: 'line',
                     data: this.average,
@@ -75,7 +83,7 @@
                         opacity: 0.5
                     }
                 }]
-            })
+            });
         }
 
         get array(): number[] {
@@ -91,7 +99,7 @@
             }
             aver = aver / this.array.length;
             for (i = 0; i < this.array.length; i++) {
-                averList.push(aver)
+                averList.push(aver);
             }
             return averList;
         }
@@ -99,6 +107,18 @@
 </script>
 
 <style lang="scss" scoped>
+
+    .header {
+        border: 1px solid red;
+        background: #ffda47;
+
+        ::v-deep {
+            .types-tab-bar {
+                border: 1px solid red;
+            }
+        }
+    }
+
     #figure {
         width: 100%;
         height: 150px;

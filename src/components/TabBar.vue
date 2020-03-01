@@ -38,7 +38,7 @@
 
         &-item {
             font-size: 20px;
-            padding: 24px 16px 8px 16px;
+            padding: 4px;
             border-bottom: 1px solid transparent;
 
             &.selected {

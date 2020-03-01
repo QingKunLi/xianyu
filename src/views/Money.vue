@@ -1,9 +1,7 @@
 <template>
     <div class="money">
         <div class="types">
-            <!--            <button :class="record.type === '-' && 'selected'" @click="select('-')">支出</button>-->
-            <!--            <button :class="record.type === '+' && 'selected'" @click="select('+')">收入</button>-->
-            <TabBar :bars="[{name: '支出', value: '-'}, {name: '收入', value: '+'}]" :c-bar.sync="record.type"/>
+            <TabBar class-prefix="types" :bars="[{name: '支出', value: '-'}, {name: '收入', value: '+'}]" :c-bar.sync="record.type"/>
             <button class="cancel" @click="cancel">取消</button>
         </div>
         <TagList v-if="record.type === '-'" class-prefix="money" :dynamic="true" :selected-tag.sync="record.tag"
@@ -85,6 +83,10 @@
         display: flex;
         justify-content: center;
         position: relative;
+
+        ::v-deep .types-tab-bar-item {
+            padding: 24px 16px 8px 16px;
+        }
 
         .cancel {
             position: absolute;
