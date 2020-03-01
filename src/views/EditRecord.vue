@@ -50,7 +50,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {Component, Watch} from 'vue-property-decorator';
+    import {Component} from 'vue-property-decorator';
     import Icon from '@/components/Icon.vue';
     import DatePicker from '@/components/DatePicker.vue';
     import dayjs from 'dayjs';
@@ -104,7 +104,7 @@
             if (this.record) {
                 this.$store.commit('updateRecord', {id: this.record.id, record: this.record});
             }
-            this.$router.replace('/')
+            this.$router.replace('/');
         }
 
         remove() {
@@ -116,11 +116,6 @@
                     this.$router.replace('/');
                 }
             }
-        }
-
-        @Watch('record.createAt')
-        log(val: Date) {
-            console.log(val);
         }
     }
 </script>
@@ -185,6 +180,7 @@
                     color: #999999;
                     margin-right: 16px;
                 }
+
                 .type {
                     height: 40px;
                     display: flex;

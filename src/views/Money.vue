@@ -12,7 +12,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {Component, Watch} from 'vue-property-decorator';
+    import {Component} from 'vue-property-decorator';
     import Layout from '@/components/Layout.vue';
     import Icon from '@/components/Icon.vue';
     import Calculator from '@/components/Money/Calculator.vue';
@@ -47,19 +47,6 @@
             this.record = this.initRecord();
             this.$router.replace('/bill');
         }
-
-        @Watch('record', {deep: true})
-        listenRecord(val: RecordItem) {
-            console.log(val.tag.name, val.tag.value);
-            console.log(val.type);
-            console.log(val.note);
-            console.log(val.amount);
-        }
-
-        // @Watch('record.tag')
-        // listen(val: TagItem) {
-        //     console.log(val.name, val.value);
-        // }
     }
 </script>
 

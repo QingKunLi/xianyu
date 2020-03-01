@@ -56,7 +56,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {Component} from 'vue-property-decorator';
+    import {Component, Watch} from 'vue-property-decorator';
     import Layout from '@/components/Layout.vue';
     import logo from '@/assets/logo.png';
     import Icon from '@/components/Icon.vue';
@@ -73,8 +73,8 @@
     })
     export default class Bill extends Vue {
         logo: string = logo;
-        year = dayjs().year().toString();
-        month = (dayjs().month() + 1).toString();
+        year = window.sessionStorage.getItem('year') || dayjs().year().toString();
+        month = window.sessionStorage.getItem('month') || (dayjs().month() + 1).toString();
 
         get years() {
             const endYear = dayjs().year();
@@ -211,6 +211,15 @@
             } else {
                 return -record.amount;
             }
+        }
+
+        @Watch('year')
+        saveYear(year: string) {
+            window.sessionStorage.setItem('year', year);
+        }
+        @Watch('month')
+        saveMonth(month: string) {
+            window.sessionStorage.setItem('month', month);
         }
     }
 </script>
