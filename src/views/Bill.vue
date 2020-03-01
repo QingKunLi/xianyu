@@ -35,7 +35,7 @@
                 </div>
             </div>
         </header>
-        <ul class="record">
+        <ul v-if="groupList.length > 0" class="record">
             <li v-for="(group, index) in groupList" :key="index">
                 <div class="title">
                     <span>{{getTitle(group)}}</span>
@@ -51,6 +51,12 @@
                 </div>
             </li>
         </ul>
+        <div v-else class="reverse">
+            <div class="icon">
+                <Icon name="record" />
+            </div>
+            <span>暂时还没有记录. 快去记一笔吧~</span>
+        </div>
     </Layout>
 </template>
 
@@ -341,6 +347,27 @@
                     }
                 }
             }
+        }
+    }
+
+    .reverse {
+        margin-top: 20vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        .icon {
+            width: 100px;
+            height: 100px;
+            svg {
+                width: 80px;
+                height: 80px;
+            }
+        }
+        span {
+            color: #999999;
+            font-size: 12px;
         }
     }
 
