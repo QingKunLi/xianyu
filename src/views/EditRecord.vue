@@ -29,7 +29,7 @@
                 <li>
                     <label class="date">
                         <span class="name">日期</span>
-                        <DatePicker :initial-date="`2020-01-21T13:59:26.069Z`" @update:year="updateYear"
+                        <DatePicker :initial-date="dayjs(record.createAt).toISOString()" @update:year="updateYear"
                                     @update:month="updateMonth" @update:date="updateDate"/>
                     </label>
                 </li>
@@ -60,6 +60,7 @@
     })
     export default class EditRecord extends Vue {
         record?: RecordItem;
+        dayjs = dayjs;
 
         created() {
             this.$store.commit('findRecord', parseInt(this.$route.params.id));
