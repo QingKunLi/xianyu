@@ -11,7 +11,6 @@
         components: {Layout}
     })
     export default class Charts extends Vue {
-        date = '1';
     }
 </script>
 

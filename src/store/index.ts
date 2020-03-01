@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import {defaultTags} from '@/constants/defaultTags';
+import {defaultExpenseTags} from '@/constants/defaultTags';
 import idCreator from '@/lib/idCreator';
 
 Vue.use(Vuex);
@@ -15,7 +15,7 @@ type storeState = {
 
 const store = new Vuex.Store({
     state: {
-        tagList: JSON.parse(window.localStorage.getItem('tag-list') || '0') || defaultTags,
+        tagList: JSON.parse(window.localStorage.getItem('tag-list') || '0') || defaultExpenseTags,
         recordList: JSON.parse(window.localStorage.getItem('record-list') || '[]'),
         tagListError: '',
         currentRecord: undefined,

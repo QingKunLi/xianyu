@@ -1,11 +1,19 @@
 
-const defaultTags = [
+const defaultExpenseTags = [
     {name: 'food', value: '餐饮'},
     {name: 'shopping', value: '购物'},
     {name: 'house', value: '居住'},
     {name: 'transport', value: '交通'},
     {name: 'entertainment', value: '娱乐'},
     {name: 'medical', value: '医疗'}
+] as TagItem[];
+
+const defaultIncomeTags = [
+    {name: 'salary', value: '工资'},
+    {name: 'part-time', value: '兼职'},
+    {name: 'bonus', value: '奖金'},
+    {name: 'reimbursement', value: '报销'},
+    {name: 'gift', value: '礼金'}
 ] as TagItem[];
 
 const foodTags = [
@@ -58,4 +66,4 @@ const medicalTags = [
     {name: 'surgery', value: '手术费'}
 ]
 
-export {defaultTags, foodTags, shoppingTags, transportTags, houseTags, entertainmentTags, medicalTags};
+export {defaultExpenseTags, defaultIncomeTags, foodTags, shoppingTags, transportTags, houseTags, entertainmentTags, medicalTags};
