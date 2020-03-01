@@ -1,7 +1,7 @@
 <template>
     <div class="edit">
         <header class="header">
-            <button class="back">
+            <button class="back" @click="back">
                 <Icon name="left"/>
             </button>
             <div class="tag">
@@ -17,7 +17,7 @@
                 <li>
                     <label>
                         <span class="name">类型</span>
-                        <input type="text" v-model="record.type">
+                        <div class="type">{{record.type === '-' ? '支出':'收入'}}</div>
                     </label>
                 </li>
                 <li>
@@ -29,7 +29,8 @@
                 <li>
                     <label class="date">
                         <span class="name">日期</span>
-                        <DatePicker :initial-date="`2020-01-21T13:59:26.069Z`" @update:year="updateYear" @update:month="updateMonth" @update:date="updateDate"/>
+                        <DatePicker :initial-date="`2020-01-21T13:59:26.069Z`" @update:year="updateYear"
+                                    @update:month="updateMonth" @update:date="updateDate"/>
                     </label>
                 </li>
                 <li>
@@ -41,8 +42,8 @@
             </ul>
         </main>
         <footer class="footer">
-            <button>编辑完成</button>
-            <button>删除</button>
+            <button @click="ok">编辑完成</button>
+            <button @click="remove">删除</button>
         </footer>
     </div>
 </template>
@@ -58,26 +59,62 @@
         components: {DatePicker, Icon}
     })
     export default class EditRecord extends Vue {
-        record: RecordItem = {
-            id: 1,
-            tag: {name: 'food', value: '餐饮'},
-            type: '-',
-            note: '下馆子',
-            amount: 50,
-            createAt: new Date()
+        record?: RecordItem;
+
+        created() {
+            this.$store.commit('findRecord', parseInt(this.$route.params.id));
+            this.record = this.$store.state.currentRecord;
+            if (!this.record) {
+                this.record = {
+                    id: 0,
+                    tag: {name: 'food', value: '餐饮'},
+                    type: '-',
+                    note: '',
+                    amount: 0,
+                    createAt: new Date()
+                }; // 消除Vue warn
+                this.$router.replace('/error');
+            }
         }
-        // created() {
-        //
-        // }
 
         updateYear(year: number) {
-            this.record.createAt = dayjs(this.record.createAt).year(year).toDate();
+            if (this.record) {
+                this.record.createAt = dayjs(this.record.createAt).year(year).toDate();
+            }
         }
+
         updateMonth(month: number) {
-            this.record.createAt = dayjs(this.record.createAt).month(month - 1).toDate();
+            if (this.record) {
+                this.record.createAt = dayjs(this.record.createAt).month(month - 1).toDate();
+            }
         }
+
         updateDate(date: number) {
-            this.record.createAt = dayjs(this.record.createAt).date(date).toDate();
+            if (this.record) {
+                this.record.createAt = dayjs(this.record.createAt).date(date).toDate();
+            }
+        }
+
+        back() {
+            this.$router.replace('/');
+        }
+
+        ok() {
+            if (this.record) {
+                this.$store.commit('updateRecord', {id: this.record.id, record: this.record});
+            }
+            this.$router.replace('/')
+        }
+
+        remove() {
+            if (this.record) {
+                this.$store.commit('removeRecord', this.record.id);
+                if (this.$store.state.recordListError === 'notfound') {
+                    window.alert('该记录不存在');
+                } else {
+                    this.$router.replace('/');
+                }
+            }
         }
 
         @Watch('record.createAt')
@@ -146,6 +183,11 @@
                 .name {
                     color: #999999;
                     margin-right: 16px;
+                }
+                .type {
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
                 }
 
                 input {
