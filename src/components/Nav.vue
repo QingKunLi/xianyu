@@ -35,6 +35,11 @@
         align-items: center;
         padding: 4px 24px;
         box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background: white;
 
         .nav-item {
             display: flex;

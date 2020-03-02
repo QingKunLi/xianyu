@@ -27,6 +27,7 @@
         overflow: auto;
         &-content {
             flex-grow: 1;
+            padding-bottom: 52px;
         }
     }
 </style>
