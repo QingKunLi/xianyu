@@ -54,6 +54,7 @@
     import Icon from '@/components/Icon.vue';
     import DatePicker from '@/components/DatePicker.vue';
     import dayjs from 'dayjs';
+    import clone from '@/lib/clone';
 
     @Component({
         components: {DatePicker, Icon}
@@ -64,7 +65,7 @@
 
         created() {
             this.$store.commit('findRecord', parseInt(this.$route.params.id));
-            this.record = this.$store.state.currentRecord;
+            this.record = clone<RecordItem>(this.$store.state.currentRecord);
             if (!this.record) {
                 this.record = {
                     id: 0,

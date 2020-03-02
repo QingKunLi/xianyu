@@ -39,8 +39,8 @@
             '7', '8', '9', '完成', '.', '0'];
         output = '0';
         dot = true;
-        // 有效数字最多为.前4位.后2位
-        validNumberBeforeDot = 4;
+        // 有效数字最多为.前6位.后2位
+        validNumberBeforeDot = 6;
         validNumberAfterDot = 2;
         // 记录运算
         beforeNumber = 0;
@@ -60,8 +60,8 @@
         }
 
         handleInput(button: string) {
-            // 最大有效位数17位
-            if (this.output.length >= 17) {
+            // 最大有效位数21位
+            if (this.output.length >= 21) {
                 return;
             }
             // 数字不能以0开头(除了小数)
@@ -202,7 +202,7 @@
 
         reset() {
             this.dot = true;
-            this.validNumberBeforeDot = 4;
+            this.validNumberBeforeDot = 6;
             this.validNumberAfterDot = 2;
         }
 
@@ -215,11 +215,11 @@
                     this.dot = false;
                     const integer = this.beforeNumber.toString().split('.')[0];
                     const decimal = this.beforeNumber.toString().split('.')[1];
-                    this.validNumberBeforeDot = 4 - integer.length;
+                    this.validNumberBeforeDot = 6 - integer.length;
                     this.validNumberAfterDot = 2 - decimal.length;
                 } else {
                     this.dot = true;
-                    this.validNumberBeforeDot = 4 - this.beforeNumber.toString().length;
+                    this.validNumberBeforeDot = 6 - this.beforeNumber.toString().length;
                     this.validNumberAfterDot = 2;
                 }
             } else {
