@@ -52,10 +52,7 @@
             </li>
         </ul>
         <div v-else class="reverse">
-            <div class="icon">
-                <Icon name="record" />
-            </div>
-            <span>暂时还没有记录. 快去记一笔吧~</span>
+            <Blank />
         </div>
     </Layout>
 </template>
@@ -68,6 +65,7 @@
     import Icon from '@/components/Icon.vue';
     import dayjs from 'dayjs';
     import clone from '@/lib/clone';
+    import Blank from '@/components/Blank.vue';
 
     type Group = {
         name: string;
@@ -75,7 +73,7 @@
     }
 
     @Component({
-        components: {Icon, Layout}
+        components: {Blank, Icon, Layout}
     })
     export default class Bill extends Vue {
         logo: string = logo;
@@ -352,23 +350,6 @@
 
     .reverse {
         margin-top: 20vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-
-        .icon {
-            width: 100px;
-            height: 100px;
-            svg {
-                width: 80px;
-                height: 80px;
-            }
-        }
-        span {
-            color: #999999;
-            font-size: 12px;
-        }
     }
 
 </style>
