@@ -1,58 +1,62 @@
 <template>
     <div class="tags">
-        <header class="header">
-            <div class="title">
-                <button class="back" @click="back">
-                    <Icon name="left"/>
-                </button>
-                <span>添加支出类别</span>
-            </div>
-            <button class="ok" @click="ok">完成</button>
-        </header>
-        <div class="current">
-            <div class="label">
-                <span>选中标签: </span>
-                <div class="icon">
-                    <Icon :name="tag.name"/>
+        <div class="fixed">
+            <header class="header">
+                <div class="title">
+                    <button class="back" @click="back">
+                        <Icon name="left"/>
+                    </button>
+                    <span>添加支出类别</span>
                 </div>
+                <button class="ok" @click="ok">完成</button>
+            </header>
+            <div class="current">
+                <div class="label">
+                    <span>选中标签: </span>
+                    <div class="icon">
+                        <Icon :name="tag.name"/>
+                    </div>
+                </div>
+                <span>{{tag.value}}</span>
             </div>
-            <span>{{tag.value}}</span>
         </div>
-        <div class="food">
-            <div class="kind-name">
-                餐饮
+        <div class="content">
+            <div class="food">
+                <div class="kind-name">
+                    餐饮
+                </div>
+                <TagList class-prefix="main" :tag-list="foodTags" :selected-tag.sync="tag"/>
             </div>
-            <TagList class-prefix="main" :tag-list="foodTags" :selected-tag.sync="tag"/>
-        </div>
-        <div class="shopping">
-            <div class="kind-name">
-                购物
+            <div class="shopping">
+                <div class="kind-name">
+                    购物
+                </div>
+                <TagList class-prefix="main" :tag-list="shoppingTags" :selected-tag.sync="tag"/>
             </div>
-            <TagList class-prefix="main" :tag-list="shoppingTags" :selected-tag.sync="tag"/>
-        </div>
-        <div class="transport">
-            <div class="kind-name">
-                交通
+            <div class="transport">
+                <div class="kind-name">
+                    交通
+                </div>
+                <TagList class-prefix="main" :tag-list="transportTags" :selected-tag.sync="tag"/>
             </div>
-            <TagList class-prefix="main" :tag-list="transportTags" :selected-tag.sync="tag"/>
-        </div>
-        <div class="house">
-            <div class="kind-name">
-                居住
+            <div class="house">
+                <div class="kind-name">
+                    居住
+                </div>
+                <TagList class-prefix="main" :tag-list="houseTags" :selected-tag.sync="tag"/>
             </div>
-            <TagList class-prefix="main" :tag-list="houseTags" :selected-tag.sync="tag"/>
-        </div>
-        <div class="entertainment">
-            <div class="kind-name">
-                娱乐
+            <div class="entertainment">
+                <div class="kind-name">
+                    娱乐
+                </div>
+                <TagList class-prefix="main" :tag-list="entertainmentTags" :selected-tag.sync="tag"/>
             </div>
-            <TagList class-prefix="main" :tag-list="entertainmentTags" :selected-tag.sync="tag"/>
-        </div>
-        <div class="medical">
-            <div class="kind-name">
-                医疗
+            <div class="medical">
+                <div class="kind-name">
+                    医疗
+                </div>
+                <TagList class-prefix="main" :tag-list="medicalTags" :selected-tag.sync="tag"/>
             </div>
-            <TagList class-prefix="main" :tag-list="medicalTags" :selected-tag.sync="tag"/>
         </div>
     </div>
 </template>
@@ -144,6 +148,14 @@
         }
     }
 
+    .fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: white;
+    }
+
     .header {
         background: #ffda47;
         font-size: 20px;
@@ -208,6 +220,9 @@
         }
     }
 
+    .content {
+        padding-top: 120px;
+    }
 
     .kind-name {
         font-size: 14px;

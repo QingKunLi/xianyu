@@ -2,6 +2,9 @@
 const path = require('path')
 
 module.exports = {
+    publicPath: process.env.NODE_ENV === 'production'
+        ? '/xianyu-app/'
+        : '/',
     chainWebpack: config => {
         const icons = path.resolve(__dirname, 'src', 'assets', 'icons')
         // 配置loader
