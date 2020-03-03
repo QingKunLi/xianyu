@@ -25,6 +25,7 @@ const store = new Vuex.Store({
         insertRecord(state, record: RecordItem) {
             record.id = idCreator();
             record.createAt = new Date();
+            record.amount = Math.abs(record.amount);  // 保证金额为正
             state.recordList.push(record);
             store.commit('saveRecord');
         },
